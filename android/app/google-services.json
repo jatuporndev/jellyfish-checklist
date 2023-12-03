@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1035959503790",
+    "project_id": "jellyfish-c315b",
+    "storage_bucket": "jellyfish-c315b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1035959503790:android:10a31d64f04031c9bd963f",
+        "android_client_info": {
+          "package_name": "com.whale.jellyfish.jellyfish"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZwxUWWtRlGZ-Ium2GGpq7wA7xNFBVFJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
