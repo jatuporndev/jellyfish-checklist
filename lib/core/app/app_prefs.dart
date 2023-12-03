@@ -1,4 +1,7 @@
+import 'package:jellyfish/core/app/constrains.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const String _key = "key";
 
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
@@ -14,11 +17,16 @@ class AppPreferences {
     }
   }
 
-  Future<void> setToken() async {
-
+  Future<void> setKey(String key) async {
+    _sharedPreferences.setString(_key, key);
   }
 
-  String getAccessToken() {
-    return "";
+  String getKey() {
+    String? key = _sharedPreferences.getString(_key);
+    if (key != null && key.isNotEmpty) {
+      return key;
+    } else {
+      return Constants.empty;
+    }
   }
 }
