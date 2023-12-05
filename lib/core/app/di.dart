@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jellyfish/core/app/app_prefs.dart';
 import 'package:jellyfish/presentation/check_room/bloc/check_room_bloc.dart';
+import 'package:jellyfish/presentation/home/bloc/home_bloc.dart';
+import 'package:jellyfish/presentation/sign_in/bloc/sign_in_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -20,4 +22,10 @@ Future<void> initAppModule() async {
 
   //check room
   getIt.registerFactory<CheckRoomBloc>(() => CheckRoomBloc(getIt()));
+
+  //signIn
+  getIt.registerFactory<SignInBloc>(() => SignInBloc(getIt()));
+
+  //Home
+  getIt.registerFactory<HomeBloc>(() => HomeBloc(getIt()));
 }

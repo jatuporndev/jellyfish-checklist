@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jellyfish/core/app/di.dart';
 import 'package:jellyfish/core/router/app_generator.dart';
 import 'package:jellyfish/presentation/check_room/bloc/check_room_bloc.dart';
+import 'package:jellyfish/presentation/home/bloc/home_bloc.dart';
 import 'package:jellyfish/presentation/home/home.dart';
+import 'package:jellyfish/presentation/sign_in/bloc/sign_in_bloc.dart';
 import 'package:jellyfish/presentation/sign_in/sign_in.dart';
 
 class MyApp extends StatelessWidget {
@@ -14,11 +16,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'jellyfish',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent),
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent)
+        //     .copyWith(background: Colors.black54),
+        // textTheme: const TextTheme(
+        //   bodyLarge: TextStyle(color: Colors.white),
+        //   bodyMedium: TextStyle(color: Colors.white),
+        // ),
+        // inputDecorationTheme: const InputDecorationTheme(
+        //   hintStyle: TextStyle(color: Colors.white70),
+        // ),
+        // iconTheme: const IconThemeData(color: Colors.white),
       ),
-      home: const MyHomePage(),
-      onGenerateRoute:  RouteGenerator.getRoute,
+      home: MultiBlocProvider(providers: [
+        BlocProvider(create: (_) => getIt<CheckRoomBloc>()..add(IsHaveRoom())),
+        BlocProvider(create: (_) => getIt<SignInBloc>()),
+        BlocProvider(create: (_) => getIt<HomeBloc>()),
+      ], child: const MyHomePage()),
+      onGenerateRoute: RouteGenerator.getRoute,
       debugShowCheckedModeBanner: false,
     );
   }
@@ -32,35 +47,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late final CheckRoomBloc checkRoomBloc;
-
   @override
   void initState() {
     super.initState();
-    checkRoomBloc = getIt<CheckRoomBloc>();
-    checkRoomBloc.add(IsHaveRoom());
   }
 
   @override
   void dispose() {
-    checkRoomBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [BlocProvider(create: (_) => getIt<CheckRoomBloc>())],
-        child: BlocBuilder<CheckRoomBloc, CheckRoomState>(
-          builder: (BuildContext context, CheckRoomState state) {
-            if (state.checkState == CheckState.haveRoom) {
-              return const Home();
-            } else {
-              return const Scaffold(
-                body: SignIn(),
-              );
-            }
-          },
-        ));
+    return BlocBuilder<CheckRoomBloc, CheckRoomState>(
+      builder: (BuildContext context, CheckRoomState state) {
+        if (state.checkState == CheckState.haveRoom) {
+          return const Home();
+        } else {
+          return const SignIn();
+        }
+      },
+    );
   }
 }
