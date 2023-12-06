@@ -41,46 +41,65 @@ class _SignInState extends State<SignIn> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Image.asset("lib/assets/images/icon_home.png",scale: 4,),
                     const Text(
-                      "Roommmm",
+                      "ROOOOOOM!",
                       style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500),
                     ),
                     const Text("Hi, Enter Your key room"),
                     const SizedBox(
-                      height: 52,
+                      height: 34,
                     ),
                      Padding(
-                      padding: const EdgeInsets.only(left: 23, right: 23),
+                      padding: const EdgeInsets.only(left: 26, right: 26),
                       child: SizedBox(
                         height: 56,
                         child: TextField(
                           controller: _keyController,
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.key_outlined),
-                            prefixIconColor: Colors.deepPurpleAccent,
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter a key hereeeee!',
+                            prefixIcon: Icon(Icons.kebab_dining),
+                            prefixIconColor: Colors.black26,
+                            hintText: "key"
+                            //border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 26, right: 26),
+                      child: SizedBox(
+                        height: 56,
+                        child: TextField(
+                          controller: _keyController,
+                          decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.self_improvement),
+                              prefixIconColor: Colors.black26,
+                              hintText: "pin"
+                            //border: OutlineInputBorder(),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(
-                      height: 26,
+                      height: 16,
                     ),
-                    SizedBox(
-                      width: 185,
-                      height: 42,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // <-- Radius
+                    Padding(
+                      padding: const EdgeInsets.only(left: 26, right: 26),
+                      child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: 42,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurpleAccent[100],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
+                          onPressed: () => {
+                            signInBloc.add(EnterRoom(keyName: _keyController.text))
+                        },
+                          child: const Text("let's go",style: TextStyle(color: Colors.white),),
                         ),
-                        onPressed: () => {
-                          signInBloc.add(EnterRoom(keyName: _keyController.text))
-                      },
-                        child: const Text("let's go"),
                       ),
                     ),
                     Row(
