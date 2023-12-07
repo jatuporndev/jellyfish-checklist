@@ -46,6 +46,9 @@ class _CreateRoomState extends State<CreateRoom> {
                 height: 8,
               ),
               TextField(
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
                 controller: _passController,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.self_improvement),
@@ -71,7 +74,7 @@ class _CreateRoomState extends State<CreateRoom> {
               ),
               SizedBox(
                 width: MediaQuery.sizeOf(context).width,
-                height: 42,
+                height: 48,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurpleAccent[100],
