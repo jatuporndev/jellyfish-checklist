@@ -38,6 +38,7 @@ dependencies:
   cloud_firestore: ^4.13.3
 
   giffy_dialog: ^2.0.0+2
+  percent_indicator: ^4.2.3
 
   flutter:
     sdk: flutter
