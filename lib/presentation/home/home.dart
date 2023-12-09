@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocListener<HomeBloc, HomeState>(
         listener: (BuildContext context, state) {
           if (state.homeStateEnum == HomeStateEnum.signedOut) {
@@ -38,29 +39,30 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            logoutIcon(context),
-            // Container(
-            //   height: (MediaQuery.of(context).size.height * 0.25),
-            //   width: MediaQuery.of(context).size.width,
-            //   decoration: BoxDecoration(
-            //     color: ColorsManager.mainColor,
-            //     borderRadius: BorderRadius.only(
-            //       bottomLeft: Radius.circular(16.0),
-            //       bottomRight: Radius.circular(16.0),
-            //     ),
-            //   ),
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       logoutIcon(context),
-            //     ],
-            //   ),
-            // ),
+            // logoutIcon(context),
+            Container(
+              height: (MediaQuery.of(context).size.height * 0.25),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: ColorsManager.mainColor,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  logoutIcon(context),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16,),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 170,
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(8.0),
               child: Card(
                 elevation: 8,
                 shadowColor: Colors.amber,
@@ -80,7 +82,7 @@ class _HomeState extends State<Home> {
                       ),
                       // Card Content
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,6 +102,8 @@ class _HomeState extends State<Home> {
                                   radius: 34.0,
                                   lineWidth: 8.0,
                                   percent: 0.3,
+                                  animation: true,
+                                  animationDuration: 900,
                                   center: Text(
                                     "30%",
                                     style: TextStyle(
@@ -112,15 +116,23 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                          const Text(
-                            "2 of 23",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18
-                            ),
-                          )
-
+                            Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Text(
+                                  "2 of 23",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18
+                                  ),
+                                ),
+                                Spacer(),
+                                Icon(Icons.keyboard_arrow_right,color: Colors.white,)
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -132,7 +144,7 @@ class _HomeState extends State<Home> {
             Container(
               width: MediaQuery.of(context).size.width,
               height: 170,
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(8.0),
               child: Card(
                 elevation: 8,
                 shadowColor: Colors.amber,
@@ -172,6 +184,8 @@ class _HomeState extends State<Home> {
                                   radius: 34.0,
                                   lineWidth: 8.0,
                                   percent: 0.3,
+                                  animation: true,
+                                  animationDuration: 900,
                                   center: Text(
                                     "10%",
                                     style: TextStyle(
@@ -184,15 +198,23 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            const Text(
-                              "2 of 23",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18
-                              ),
+                            Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Text(
+                                  "2 of 23",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18
+                                  ),
+                                ),
+                                Spacer(),
+                                Icon(Icons.keyboard_arrow_right,color: Colors.white,)
+                              ],
                             )
-
                           ],
                         ),
                       ),
