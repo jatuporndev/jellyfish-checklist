@@ -16,6 +16,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late final HomeBloc homeBloc;
+  final isLogoutButtonHidden = false;
+  final _cardSide = 245.0;
 
   @override
   void initState() {
@@ -39,45 +41,44 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // logoutIcon(context),
-            Container(
-              height: (MediaQuery.of(context).size.height * 0.25),
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: ColorsManager.mainColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16.0),
-                  bottomRight: Radius.circular(16.0),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  logoutIcon(context),
-                ],
+            //logoutIcon(context),
+            // Card(
+            //   child: logoutIcon(context),
+            // ),
+            const Padding(
+              padding: EdgeInsets.only(left: 16,top: 16,right: 16),
+              child: Text(
+                "Emm..",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 16,),
+
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 170,
+              height: _cardSide,
               padding: const EdgeInsets.all(8.0),
               child: Card(
                 elevation: 8,
-                shadowColor: Colors.amber,
+                shadowColor: Colors.deepPurpleAccent[100],
                 color: Colors.deepPurpleAccent[100],
-                child: GestureDetector(
-                  onTap: (){
 
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.checkList);
                   },
                   child: Stack(
                     children: [
                       // Background Image
                       Positioned.fill(
-                        child: Image.asset(
-                          "lib/assets/images/cat_title.png",
-                          fit: BoxFit.fill,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0), // Adjust the radius to match the Card's radius
+                          child: Image.asset(
+                            "lib/assets/images/cat_title.png",
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       // Card Content
@@ -92,7 +93,7 @@ class _HomeState extends State<Home> {
                                 const Text(
                                   "CheckList",
                                   style: TextStyle(
-                                    fontSize: 38,
+                                    fontSize: 34,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -126,11 +127,13 @@ class _HomeState extends State<Home> {
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 18
-                                  ),
+                                      fontSize: 16),
                                 ),
                                 Spacer(),
-                                Icon(Icons.keyboard_arrow_right,color: Colors.white,)
+                                Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: Colors.white,
+                                )
                               ],
                             )
                           ],
@@ -143,23 +146,21 @@ class _HomeState extends State<Home> {
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 170,
+              height: _cardSide,
               padding: const EdgeInsets.all(8.0),
               child: Card(
                 elevation: 8,
-                shadowColor: Colors.amber,
+                shadowColor: Colors.blueAccent[100],
                 color: Colors.blueAccent[100],
                 child: GestureDetector(
-                  onTap: (){
-
-                  },
+                  onTap: () {},
                   child: Stack(
                     children: [
                       // Background Image
                       Positioned.fill(
                         child: Image.asset(
                           "lib/assets/images/water_title.png",
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ),
                       ),
                       // Card Content
@@ -174,7 +175,7 @@ class _HomeState extends State<Home> {
                                 const Text(
                                   "Achievement",
                                   style: TextStyle(
-                                    fontSize: 38,
+                                    fontSize: 34,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -198,21 +199,23 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            Spacer(),
-                            Row(
+                            const Spacer(),
+                            const Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                const Text(
+                                Text(
                                   "2 of 23",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 18
-                                  ),
+                                      fontSize: 16),
                                 ),
                                 Spacer(),
-                                Icon(Icons.keyboard_arrow_right,color: Colors.white,)
+                                Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: Colors.white,
+                                )
                               ],
                             )
                           ],
@@ -223,85 +226,101 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-
+            Spacer(),
+            GestureDetector(
+              onTap: () {
+                showLogoutPopup(context);
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 64,
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  color: Colors.black,
+                  child: Center(
+                    child: const Text(
+                      "Logout",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         )),
       ),
     );
   }
 
-  IconButton logoutIcon(BuildContext context) {
-    return IconButton(
-        onPressed: () => {
-              showModalBottomSheet(
-                context: context,
-                //backgroundColor: Colors.white,
-                //barrierColor: Colors.deepPurpleAccent[100],
-                clipBehavior: Clip.antiAlias,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(32),
+  void showLogoutPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      //backgroundColor: Colors.white,
+      //barrierColor: Colors.deepPurpleAccent[100],
+      clipBehavior: Clip.antiAlias,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(32),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return GiffyBottomSheet.image(
+          const Image(image: AssetImage('lib/assets/images/signedout.gif')),
+          title: const Text(
+            'DO YOU WANT TO LOG OUT!?',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black),
+          ),
+          content: const Text(
+            'This cat is shocked that you are leaving the room. Are you really sure? Think again.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          actions: [
+            SizedBox(
+              width: 146,
+              height: 52,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black38,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // <-- Radius
                   ),
                 ),
-                builder: (BuildContext context) {
-                  return GiffyBottomSheet.image(
-                    const Image(
-                        image: AssetImage('lib/assets/images/signedout.gif')),
-                    title: const Text(
-                      'DO YOU WANT TO LOG OUT!?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    content: const Text(
-                      'This cat is shocked that you are leaving the room. Are you really sure? Think again.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    actionsAlignment: MainAxisAlignment.spaceAround,
-                    actions: [
-                      SizedBox(
-                        width: 148,
-                        height: 52,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black38,
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(12), // <-- Radius
-                            ),
-                          ),
-                          onPressed: () => {
-                            Navigator.pop(context, 'CANCEL'),
-                          },
-                          child: const Text(
-                            "NOPE",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 148,
-                        height: 52,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorsManager.mainColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () => {
-                            homeBloc.add(SignedOut()),
-                          },
-                          child: const Text("YEP",
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                    ],
-                  );
+                onPressed: () => {
+                  Navigator.pop(context, 'CANCEL'),
                 },
+                child: const Text(
+                  "NOPE",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            },
-        icon: const Icon(Icons.exit_to_app));
+            ),
+            SizedBox(
+              width: 148,
+              height: 52,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorsManager.mainColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () => {
+                  homeBloc.add(SignedOut()),
+                },
+                child: const Text("YEP", style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
+
 }

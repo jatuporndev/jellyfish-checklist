@@ -73,7 +73,6 @@ class _SignInState extends State<SignIn> {
                           prefixIcon: Icon(Icons.kebab_dining),
                           prefixIconColor: Colors.black26,
                           hintText: "key"
-                          //border: OutlineInputBorder(),
                           ),
                     ),
                   ),
@@ -92,7 +91,6 @@ class _SignInState extends State<SignIn> {
                             prefixIcon: Icon(Icons.self_improvement),
                             prefixIconColor: Colors.black26,
                             hintText: "pin"
-                            //border: OutlineInputBorder(),
                             ),
                       ),
                     ),
