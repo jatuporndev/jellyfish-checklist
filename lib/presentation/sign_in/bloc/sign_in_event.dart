@@ -8,11 +8,13 @@ class SigInEvent extends Equatable {
 
 class EnterRoom extends SigInEvent {
   EnterRoom({
-    required this.keyName
+    required this.keyName,
+    required this.pin
 });
   final String keyName;
+  final String pin;
 
   @override
-  List<Object?> get props => [keyName];
+  List<Object?> get props => [];
 
 }

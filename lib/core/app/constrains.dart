@@ -7,4 +7,8 @@ class Constants {
 
   static const String baseUrl = "";
   static const String empty = "";
+
+
+  //database key
+  static const String room = 'room';
 }

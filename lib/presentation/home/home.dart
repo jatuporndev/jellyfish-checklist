@@ -62,8 +62,8 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(8.0),
               child: Card(
                 elevation: 8,
-                shadowColor: Colors.deepPurpleAccent[100],
-                color: Colors.deepPurpleAccent[100],
+                shadowColor:  ColorsManager.mainColor,
+                color:  ColorsManager.mainColor,
 
                 child: GestureDetector(
                   onTap: () {
@@ -144,6 +144,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
+            if(false)
             Container(
               width: MediaQuery.of(context).size.width,
               height: _cardSide,
@@ -239,7 +240,7 @@ class _HomeState extends State<Home> {
                   color: Colors.black,
                   child: Center(
                     child: const Text(
-                      "Logout",
+                      "IM OUT!",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,

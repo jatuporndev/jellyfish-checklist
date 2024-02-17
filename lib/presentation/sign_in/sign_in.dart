@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jellyfish/presentation/sign_in/bloc/sign_in_bloc.dart';
 
 import '../../core/router/app_router.dart';
+import '../util/utill.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -16,6 +17,7 @@ class _SignInState extends State<SignIn> {
   final _pinController = TextEditingController();
   late final SignInBloc signInBloc;
   bool isPin = false;
+  bool isError = false;
 
   @override
   void initState() {
@@ -29,10 +31,13 @@ class _SignInState extends State<SignIn> {
       body: SafeArea(
           child: BlocListener<SignInBloc, SignInState>(
         listener: (BuildContext context, state) {
+          print(state.signState);
           if (state.signState == SignState.signed) {
             Navigator.of(context).popAndPushNamed(AppRouter.home);
           } else if (state.signState == SignState.unsigned) {
-            print("error");
+            setState(() {
+              isError = true;
+            });
           }
         },
         child: Padding(
@@ -45,6 +50,7 @@ class _SignInState extends State<SignIn> {
                 Image.asset(
                   "lib/assets/images/icon_home.png",
                   scale: 4,
+                  color: (isError) ? Colors.red : Colors.black,
                 ),
                 const Text(
                   "ROOOOOOM!",
@@ -72,28 +78,36 @@ class _SignInState extends State<SignIn> {
                       decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.kebab_dining),
                           prefixIconColor: Colors.black26,
-                          hintText: "key"
-                          ),
+                          hintText: "key"),
                     ),
                   ),
                 ),
-                if (isPin)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 26, right: 26),
-                    child: SizedBox(
-                      height: 56,
-                      child: TextField(
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        controller: _pinController,
-                        decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.self_improvement),
-                            prefixIconColor: Colors.black26,
-                            hintText: "pin"
-                            ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 26, right: 26),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    // Animation curve
+                    height: isPin ? 56 : 0,
+                    child: TextField(
+                      enabled: isPin,
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      controller: _pinController,
+                      decoration: InputDecoration(
+                        prefixIcon:
+                            isPin ? const Icon(Icons.self_improvement) : null,
+                        prefixIconColor: Colors.black26,
+                        hintText: isPin ? "pin" : "",
                       ),
                     ),
+                  ),
+                ),
+                if (isError)
+                  const Text(
+                    "!?",
+                    style: TextStyle(fontSize: 24, color: Colors.red),
                   ),
                 const SizedBox(
                   height: 16,
@@ -111,7 +125,10 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                       onPressed: () => {
-                        signInBloc.add(EnterRoom(keyName: _keyController.text))
+                        dismissKeyboard(context),
+                        signInBloc.add(EnterRoom(
+                            keyName: _keyController.text,
+                            pin: _pinController.text))
                       },
                       child: const Text(
                         "let's go",

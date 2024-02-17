@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
       title: 'jellyfish',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent)
+        fontFamily: 'Kanit',
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent),
         //     .copyWith(background: Colors.black54),
         // textTheme: const TextTheme(
         //   bodyLarge: TextStyle(color: Colors.white),
