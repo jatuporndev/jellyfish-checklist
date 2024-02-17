@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:jellyfish/core/app/constrains.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +20,7 @@ class AppPreferences {
   }
 
   Future<void> setKey(String key) async {
-    _sharedPreferences.setString(_key, key);
+   await _sharedPreferences.setString(_key, key);
   }
 
   String getKey() {

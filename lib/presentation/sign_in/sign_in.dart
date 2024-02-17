@@ -18,6 +18,7 @@ class _SignInState extends State<SignIn> {
   late final SignInBloc signInBloc;
   bool isPin = false;
   bool isError = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -31,12 +32,16 @@ class _SignInState extends State<SignIn> {
       body: SafeArea(
           child: BlocListener<SignInBloc, SignInState>(
         listener: (BuildContext context, state) {
-          print(state.signState);
           if (state.signState == SignState.signed) {
             Navigator.of(context).popAndPushNamed(AppRouter.home);
+          } else if (state.signState == SignState.loading) {
+            setState(() {
+              isLoading = true;
+            });
           } else if (state.signState == SignState.unsigned) {
             setState(() {
               isError = true;
+              isLoading = false;
             });
           }
         },
@@ -125,15 +130,28 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                       onPressed: () => {
-                        dismissKeyboard(context),
-                        signInBloc.add(EnterRoom(
-                            keyName: _keyController.text,
-                            pin: _pinController.text))
+                        if (!isLoading)
+                          {
+                            dismissKeyboard(context),
+                            signInBloc.add(EnterRoom(
+                                keyName: _keyController.text,
+                                pin: _pinController.text))
+                          }
                       },
-                      child: const Text(
-                        "let's go",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 26,
+                              height: 26,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3.0,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              "Let's Go",
+                              style: TextStyle(color: Colors.white),
+                            ),
                     ),
                   ),
                 ),

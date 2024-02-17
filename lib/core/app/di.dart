@@ -38,11 +38,11 @@ Future<void> initAppModule() async {
   getIt.registerFactory<CreateRoomBloc>(() => CreateRoomBloc(getIt(), getIt()));
 
   //signIn
-  getIt.registerFactory<SignInRepository>(() => SignInRepositoryImp(getIt()));
+  getIt.registerFactory<SignInRepository>(() => SignInRepositoryImp(getIt(), getIt()));
   getIt.registerFactory<SignInUseCase>(() => SignInUseCase(getIt()));
-  getIt.registerFactory<SignInBloc>(() => SignInBloc(getIt(), getIt()));
+  getIt.registerFactory<SignInBloc>(() => SignInBloc(getIt()));
 
   //Home
   getIt.registerFactory<HomeBloc>(() => HomeBloc(getIt()));
-  
+
 }
