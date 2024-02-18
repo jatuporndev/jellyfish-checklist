@@ -53,10 +53,11 @@ class _SignInState extends State<SignIn> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "lib/assets/images/icon_home.png",
+                  "lib/assets/images/title.png",
                   scale: 4,
                   color: (isError) ? Colors.red : Colors.black,
                 ),
+                const SizedBox(height: 16,),
                 const Text(
                   "ROOOOOOM!",
                   style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500),

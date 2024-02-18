@@ -19,6 +19,7 @@ class CheckListBloc extends Bloc<CheckListEvent, CheckListState> {
 
   Future<void> getList(GetList event, Emitter<CheckListState> emit) async {
     var result = _getCheckListUseCase.execute(null);
-    result.fold((left) => {}, (right) => {});
+    result.fold((left) => {}, (right) => {
+    });
   }
 }
