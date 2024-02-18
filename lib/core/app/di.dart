@@ -2,11 +2,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jellyfish/core/app/app_prefs.dart';
+import 'package:jellyfish/data/repository_imp/check_list_repositort_imp.dart';
 import 'package:jellyfish/data/repository_imp/create_room_repository_imp.dart';
 import 'package:jellyfish/data/repository_imp/sing_in_repository_imp.dart';
+import 'package:jellyfish/domain/repository/check_list_repository.dart';
 import 'package:jellyfish/domain/repository/create_room_repository.dart';
 import 'package:jellyfish/domain/repository/sign_in_repository.dart';
 import 'package:jellyfish/domain/use_case/authentication/sing_in_use_case.dart';
+import 'package:jellyfish/domain/use_case/check_list/get_check_list_use_case.dart';
+import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
 import 'package:jellyfish/presentation/check_room/bloc/check_room_bloc.dart';
 import 'package:jellyfish/presentation/create_room/bloc/create_room_bloc.dart';
 import 'package:jellyfish/presentation/home/bloc/home_bloc.dart';
@@ -44,5 +48,11 @@ Future<void> initAppModule() async {
 
   //Home
   getIt.registerFactory<HomeBloc>(() => HomeBloc(getIt()));
+
+  //CheckList
+  getIt.registerFactory<CheckListRepository>(() => CheckListRepositoryImp(getIt(), getIt()));
+  getIt.registerFactory<GetCheckListUseCase>(() => GetCheckListUseCase(getIt()));
+
+  getIt.registerFactory<CheckListBloc>(() => CheckListBloc(getIt()));
 
 }
