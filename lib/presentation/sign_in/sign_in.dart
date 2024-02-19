@@ -84,7 +84,7 @@ class _SignInState extends State<SignIn> {
                       decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.kebab_dining),
                           prefixIconColor: Colors.black26,
-                          hintText: "key"),
+                          hintText: "room id"),
                     ),
                   ),
                 ),

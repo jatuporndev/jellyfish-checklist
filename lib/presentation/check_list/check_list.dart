@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
 
+import '../../data/models/check_list_result.dart';
 import '../util/resources/color_manager.dart';
 
 class CheckList extends StatefulWidget {
@@ -17,54 +20,64 @@ class _CheckListState extends State<CheckList> {
   final detailController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<CheckListBloc>(context).add(GetList());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child:  Row(
-                      children: [
-                        Icon(Icons.arrow_back_ios_new,
-                            color:  ColorsManager.mainColor),
-                        Text(
-                          "CheckList",
-                          style: TextStyle(
-                              color:  ColorsManager.mainColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16),
+        child: BlocBuilder<CheckListBloc, CheckListState>(
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_back_ios_new, color: ColorsManager.mainColor),
+                            Text(
+                              "CheckList",
+                              style: TextStyle(
+                                color: ColorsManager.mainColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isEdit = !_isEdit;
-                        });
-                      },
-                      icon:  Icon(Icons.catching_pokemon,
-                          color:  ColorsManager.mainColor)),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          validateDetail = false;
-                        });
-                        showModalBottomSheet(
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isEdit = !_isEdit;
+                          }); // Access your BLoC and add events
+                        },
+                        icon: Icon(Icons.catching_pokemon, color: ColorsManager.mainColor),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            validateDetail = false;
+                          });
+                          showModalBottomSheet(
                             isScrollControlled: true,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  topRight: Radius.circular(10.0)),
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0),
+                              ),
                             ),
                             context: context,
                             builder: (BuildContext context) {
@@ -72,30 +85,45 @@ class _CheckListState extends State<CheckList> {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom),
+                                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                                    ),
                                     child: sheetDia(context, detailController),
                                   ),
                                 ],
                               );
+                            },
+                          );
+                        },
+                        icon: Icon(Icons.add, color: ColorsManager.mainColor),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                if (state.listState == ListState.success)
+                  Expanded(
+                      child: StreamBuilder(
+                    stream: state.checkListResult,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            itemCount: snapshot.data?.length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (context, index) {
+                              return checkList("${snapshot.data?[index].title}");
                             });
-                      },
-                      icon:
-                           Icon(Icons.add, color: ColorsManager.mainColor))
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            checkList(
-                "ตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อยตี๋น้อย"),
-            
-            checkList("ตี๋น้อย"),
-            checkList("ตี๋น้อย"),
-            checkList("ตี๋น้อย"),
-          ],
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  )),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -115,7 +143,7 @@ class _CheckListState extends State<CheckList> {
               height: size,
               child: Checkbox(
                 value: _isCheck,
-                activeColor:  ColorsManager.mainColor,
+                activeColor: ColorsManager.mainColor,
                 side: const BorderSide(color: Colors.black38),
                 shape: const CircleBorder(),
                 onChanged: (bool? value) {
@@ -140,35 +168,34 @@ class _CheckListState extends State<CheckList> {
               width: 8,
             ),
             Container(
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                   color: ColorsManager.mainColor,
-                  border: Border.all(color: (ColorsManager.mainColor)!,),
+                  border: Border.all(
+                    color: (ColorsManager.mainColor)!,
+                  ),
                   borderRadius: const BorderRadius.all(
                     Radius.circular(3.0),
                   )),
               padding: const EdgeInsets.all(4),
               child: const Text("  EDIT  ",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12)),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
             ),
             const SizedBox(
               width: 2,
             ),
             Container(
-              decoration:   BoxDecoration(
+              decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: (ColorsManager.mainColor)!,),
+                  border: Border.all(
+                    color: (ColorsManager.mainColor)!,
+                  ),
                   borderRadius: const BorderRadius.all(
                     Radius.circular(3.0),
                   )),
               padding: const EdgeInsets.all(4),
               child: Text("DELETE",
-                  style: TextStyle(
-                      color: ColorsManager.mainColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12)),
+                  style:
+                      TextStyle(color: ColorsManager.mainColor, fontWeight: FontWeight.bold, fontSize: 12)),
             ),
           ]
         ],
@@ -176,8 +203,7 @@ class _CheckListState extends State<CheckList> {
     );
   }
 
-  SizedBox sheetDia(
-      BuildContext context, TextEditingController detailController) {
+  SizedBox sheetDia(BuildContext context, TextEditingController detailController) {
     return SizedBox(
       height: 175,
       child: Column(
@@ -186,9 +212,7 @@ class _CheckListState extends State<CheckList> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close)),
+              IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
               const Text("What?"),
               IconButton(
                 onPressed: () {
@@ -226,11 +250,11 @@ class _CheckListState extends State<CheckList> {
 
   void saveData() {
     setState(() {
-    if(detailController.text.isEmpty) {
+      if (detailController.text.isEmpty) {
         validateDetail = true;
-    } else {
-      validateDetail = false;
-    }
+      } else {
+        validateDetail = false;
+      }
     });
   }
 }

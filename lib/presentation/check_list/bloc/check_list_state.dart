@@ -1,26 +1,31 @@
-
 part of 'check_list_bloc.dart';
 
-class CheckListState extends Equatable{
+class CheckListState extends Equatable {
   final ListState listState;
-  const CheckListState({this.listState = ListState.initial});
+  final Stream<List<CheckListResult>>? checkListResult;
 
-  CheckListState copyWith({
-    ListState? listState
-}) {
-    return CheckListState(listState: listState ?? this.listState);
+  const CheckListState({this.listState = ListState.initial, this.checkListResult});
+
+  CheckListState copyWith({ListState? listState, Stream<List<CheckListResult>>? checkListResult}) {
+    return CheckListState(
+        listState: listState ?? this.listState,
+        checkListResult: checkListResult ?? this.checkListResult);
   }
 
   @override
-  List<Object?> get props => throw [listState];
-
+  List<Object?> get props => [listState, checkListResult];
 }
 
-enum ListState {initial, success, error, empty}
+enum ListState { initial, success, error, empty, loading }
 
 extension CheckListStateX on ListState {
   bool get initial => this == ListState.initial;
-  bool get success => this == ListState.initial;
+
+  bool get success => this == ListState.success;
+
   bool get error => this == ListState.error;
+
   bool get empty => this == ListState.empty;
+
+  bool get loading => this == ListState.loading;
 }

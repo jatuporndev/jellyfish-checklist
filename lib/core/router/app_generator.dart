@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jellyfish/core/app/app.dart';
+import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
 import 'package:jellyfish/presentation/check_list/check_list.dart';
 import 'package:jellyfish/presentation/create_room/bloc/create_room_bloc.dart';
 import 'package:jellyfish/presentation/create_room/create_room.dart';
@@ -39,7 +40,11 @@ class RouteGenerator {
                   child: const CreateRoom(),
                 ));
       case AppRouter.checkList:
-        return MaterialPageRoute(builder: (_) => const CheckList());
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => getIt<CheckListBloc>(),
+                  child: const CheckList(),
+                ));
       default:
         return unDefinedRoute();
     }
