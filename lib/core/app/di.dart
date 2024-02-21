@@ -10,6 +10,7 @@ import 'package:jellyfish/domain/repository/create_room_repository.dart';
 import 'package:jellyfish/domain/repository/sign_in_repository.dart';
 import 'package:jellyfish/domain/use_case/authentication/sing_in_use_case.dart';
 import 'package:jellyfish/domain/use_case/check_list/get_check_list_use_case.dart';
+import 'package:jellyfish/domain/use_case/check_list/update_check_list_use_case.dart';
 import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
 import 'package:jellyfish/presentation/check_room/bloc/check_room_bloc.dart';
 import 'package:jellyfish/presentation/create_room/bloc/create_room_bloc.dart';
@@ -51,8 +52,10 @@ Future<void> initAppModule() async {
 
   //CheckList
   getIt.registerFactory<CheckListRepository>(() => CheckListRepositoryImp(getIt(), getIt()));
-  getIt.registerFactory<GetCheckListUseCase>(() => GetCheckListUseCase(getIt()));
 
-  getIt.registerFactory<CheckListBloc>(() => CheckListBloc(getIt()));
+  getIt.registerFactory<GetCheckListUseCase>(() => GetCheckListUseCase(getIt()));
+  getIt.registerFactory<UpdateCheckListUseCase>(() => UpdateCheckListUseCase(getIt()));
+
+  getIt.registerFactory<CheckListBloc>(() => CheckListBloc(getIt(), getIt()));
 
 }

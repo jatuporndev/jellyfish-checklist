@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
                                   percent: 0.3,
                                   animation: true,
                                   animationDuration: 900,
-                                  center: Text(
+                                  center: const Text(
                                     "30%",
                                     style: TextStyle(
                                       color: Colors.white,
@@ -117,12 +117,12 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            Spacer(),
-                            Row(
+                            const Spacer(),
+                            const Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                const Text(
+                                Text(
                                   "2 of 23",
                                   style: TextStyle(
                                       color: Colors.white,

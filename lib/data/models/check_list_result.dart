@@ -1,14 +1,14 @@
 class CheckListResult {
-  String id;
-  String title;
-  String detail;
-  bool isCheck;
+  String? id;
+  String? title;
+  String? detail;
+  bool? isCheck;
 
   CheckListResult({
-    required this.id,
-    required this.title,
-    required this.detail,
-    required this.isCheck,
+     this.id,
+     this.title,
+     this.detail,
+     this.isCheck,
   });
 
   factory CheckListResult.fromMap(Map<String, dynamic> map, String id) {

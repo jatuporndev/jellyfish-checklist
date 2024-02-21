@@ -15,21 +15,47 @@ class CheckListRepositoryImp extends CheckListRepository {
 
   CollectionReference<Map<String, dynamic>> _getCollection() {
     var key = _appPreferences.getKey();
-    return _firebaseFirestore
-        .collection(Constants.room)
-        .doc(key)
-        .collection(Constants.checkList);
+    return _firebaseFirestore.collection(Constants.room).doc(key).collection(Constants.checkList);
   }
 
   @override
   Future<Either<Failure, Stream<List<CheckListResult>>>> getCheckList() async {
-    var streamData = _getCollection().snapshots().map((snapshot) {
-      return snapshot.docs.map((e) {
-        Map<String, dynamic> data = e.data();
-        return CheckListResult.fromMap(data, e.id);
-      }).toList();
-    });
+    try {
+      var streamData = _getCollection().orderBy('update_at', descending: true).snapshots().map((snapshot) {
+        return snapshot.docs.map((e) {
+          Map<String, dynamic> data = e.data();
+          return CheckListResult.fromMap(data, e.id);
+        }).toList();
+      });
+      return Right(streamData);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
+    }
+  }
 
-    return Right(streamData);
+
+  @override
+  Future<Either<Failure, bool>> addCheckList(CheckListResult checkListResult) {
+    // TODO: implement addCheckList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateCheckList(CheckListResult checkListResult) async {
+    Map<Object, Object> request = {};
+    var isCheck = checkListResult.isCheck;
+    var title = checkListResult.title;
+    if (isCheck != null) {
+      request = {'isCheck': isCheck};
+    }
+    if (title != null) {
+      request = {'title': title};
+    }
+    try {
+      _getCollection().doc(checkListResult.id).update(request);
+      return const Right(true);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
+    }
   }
 }

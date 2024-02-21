@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
@@ -14,15 +13,13 @@ class CheckList extends StatefulWidget {
 }
 
 class _CheckListState extends State<CheckList> {
-  bool _isCheck = true;
-  bool _isEdit = false;
+  bool _isEditMode = false;
   bool validateDetail = false;
   final detailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
     BlocProvider.of<CheckListBloc>(context).add(GetList());
   }
 
@@ -30,109 +27,87 @@ class _CheckListState extends State<CheckList> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocBuilder<CheckListBloc, CheckListState>(
-          builder: (context, state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.arrow_back_ios_new, color: ColorsManager.mainColor),
-                            Text(
-                              "CheckList",
-                              style: TextStyle(
-                                color: ColorsManager.mainColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isEdit = !_isEdit;
-                          }); // Access your BLoC and add events
-                        },
-                        icon: Icon(Icons.catching_pokemon, color: ColorsManager.mainColor),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            validateDetail = false;
-                          });
-                          showModalBottomSheet(
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                topRight: Radius.circular(10.0),
-                              ),
-                            ),
-                            context: context,
-                            builder: (BuildContext context) {
-                              return Wrap(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                                    ),
-                                    child: sheetDia(context, detailController),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.add, color: ColorsManager.mainColor),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                if (state.listState == ListState.success)
-                  Expanded(
-                      child: StreamBuilder(
-                    stream: state.checkListResult,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
+                _buildBackButton(context),
+                const Spacer(),
+                _buildEditModeButton(),
+                _buildAddItemButton(context),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          BlocBuilder<CheckListBloc, CheckListState>(
+            builder: (context, state) {
+              if (state.listState == ListState.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state.listState == ListState.error) {
+                return const Center(child: Text("emmm broken"));
+              } else {
+                return Expanded(
+                    child: StreamBuilder(
+                  stream: state.checkListResult,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      var count = snapshot.data?.length ?? 0;
+                      if (count > 0) {
                         return ListView.builder(
                             itemCount: snapshot.data?.length,
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
-                              return checkList("${snapshot.data?[index].title}");
+                              var data = snapshot.data?[index];
+                              return checklistItem("${data?.title}", data?.isCheck, data?.id);
                             });
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text(snapshot.error.toString()));
                       } else {
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "lib/assets/images/title.png",
+                                scale: 4,
+                                color: Colors.black26,
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Text("nothing here"),
+                              SizedBox(
+                                height: MediaQuery.sizeOf(context).height * 0.2,
+                              ),
+                            ],
+                          ),
+                        );
                       }
-                    },
-                  )),
-              ],
-            );
-          },
-        ),
-      ),
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ));
+              }
+            },
+          )
+        ],
+      )),
     );
   }
 
-  Container checkList(String name) {
+  Container checklistItem(String name, bool? isChecked, String? id) {
     double size = 25.0;
+
     return Container(
-      padding: const EdgeInsets.only(left: 28, right: 16, bottom: 6),
+      padding: const EdgeInsets.only(left: 28, right: 16, bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -142,98 +117,132 @@ class _CheckListState extends State<CheckList> {
               width: size,
               height: size,
               child: Checkbox(
-                value: _isCheck,
+                value: isChecked,
                 activeColor: ColorsManager.mainColor,
                 side: const BorderSide(color: Colors.black38),
                 shape: const CircleBorder(),
-                onChanged: (bool? value) {
-                  setState(() {
-                    _isCheck = !_isCheck;
-                  });
+                onChanged: (value) {
+                  BlocProvider.of<CheckListBloc>(context)
+                      .add(UpdateList(checkListResult: CheckListResult(id: id, isCheck: value)));
                 },
               ),
             ),
           ),
-          const SizedBox(
-            width: 12,
-          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               name,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
           ),
-          if (_isEdit) ...[
-            const SizedBox(
-              width: 8,
-            ),
-            Container(
-              decoration: BoxDecoration(
+          if (_isEditMode) ...[
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0),
+                    ),
+                  ),
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Wrap(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          //edit
+                          child: sheetDia(context, title: name, id: id),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
                   color: ColorsManager.mainColor,
-                  border: Border.all(
-                    color: (ColorsManager.mainColor)!,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(3.0),
-                  )),
-              padding: const EdgeInsets.all(4),
-              child: const Text("  EDIT  ",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                  border: Border.all(color: ColorsManager.mainColor!),
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                padding: const EdgeInsets.all(4),
+                child: const Row(
+                  children: [
+                    Text(
+                      "EDIT",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(
-              width: 2,
-            ),
-            Container(
-              decoration: BoxDecoration(
+            const SizedBox(width: 6),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(
-                    color: (ColorsManager.mainColor)!,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(3.0),
-                  )),
-              padding: const EdgeInsets.all(4),
-              child: Text("DELETE",
-                  style:
-                      TextStyle(color: ColorsManager.mainColor, fontWeight: FontWeight.bold, fontSize: 12)),
-            ),
-          ]
+                  border: Border.all(color: ColorsManager.mainColor!),
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_forever, color: ColorsManager.mainColor, size: 20),
+                  ],
+                ),
+              ),
+            )
+          ],
         ],
       ),
     );
   }
 
-  SizedBox sheetDia(BuildContext context, TextEditingController detailController) {
+  SizedBox sheetDia(BuildContext context2, {String? title, String? id}) {
+    if (title != null) {
+      detailController.text = title;
+    } else {
+      detailController.text = "";
+    }
     return SizedBox(
-      height: 175,
+      // height: 180,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          const SizedBox(height: 6),
+          Center(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: ColorsManager.mainColor,
+              ),
+              height: 6,
+              width: 44,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
-              const Text("What?"),
-              IconButton(
-                onPressed: () {
-                  FocusScopeNode currentFocus = FocusScope.of(context);
-                  if (!currentFocus.hasPrimaryFocus) {
-                    currentFocus.unfocus();
-                  }
-                  saveData();
-                },
-                icon: const Icon(Icons.done),
+              Text(
+                "Where?",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
-              maxLength: 24,
+              maxLength: 120,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                labelText: 'What?',
-                hintText: 'What?',
+                labelText: 'Where?',
+                hintText: 'Where?',
                 errorText: validateDetail ? 'Nah,It Can\'t Be Empty' : null,
               ),
               controller: detailController,
@@ -242,9 +251,106 @@ class _CheckListState extends State<CheckList> {
                 saveData();
               },
             ),
-          )
+          ),
+          GestureDetector(
+            onTap: () {
+              if (detailController.text.isEmpty) {
+                //BlocProvider.of<CheckListBloc>(context).add(Delete(checkListResult: CheckListResult(id: id)));
+              } else {
+                if (id != null) {
+                  BlocProvider.of<CheckListBloc>(context).add(
+                      UpdateList(checkListResult: CheckListResult(id: id, title: detailController.text)));
+                }
+                //BlocProvider.of<CheckListBloc>(context).add(Delete(checkListResult: CheckListResult(id: id)));
+              }
+
+              Navigator.pop(context);
+            },
+            child: Container(
+              width: MediaQuery.of(context2).size.width,
+              height: 66,
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                color: ColorsManager.mainColor,
+                child: const Center(
+                  child: Text(
+                    "OK",
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
         ],
       ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: Row(
+        children: [
+          Icon(Icons.arrow_back_ios_new, color: ColorsManager.mainColor),
+          SizedBox(width: 8),
+          Text(
+            "CheckList",
+            style: TextStyle(
+              color: ColorsManager.mainColor,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditModeButton() {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _isEditMode = !_isEditMode;
+        });
+      },
+      icon: Icon(
+        _isEditMode ? Icons.edit_off : Icons.edit,
+        color: ColorsManager.mainColor,
+      ),
+    );
+  }
+
+  Widget _buildAddItemButton(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              topRight: Radius.circular(10.0),
+            ),
+          ),
+          context: context,
+          builder: (BuildContext context) {
+            return Wrap(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  //add
+                  child: sheetDia(context),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      icon: Icon(Icons.add, color: ColorsManager.mainColor),
     );
   }
 
