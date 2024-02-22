@@ -1,0 +1,1 @@
+enum SubmitTypeEnum { add, edit, delete }

@@ -15,3 +15,19 @@ class UpdateList extends CheckListEvent {
   @override
   List<Object?> get props => [checkListResult];
 }
+
+class DeleteList extends CheckListEvent {
+  final CheckListResult checkListResult;
+  DeleteList({required this.checkListResult});
+
+  @override
+  List<Object?> get props => [checkListResult];
+}
+class AddList extends CheckListEvent {
+  final CheckListResult checkListResult;
+  AddList({required this.checkListResult});
+
+  @override
+  List<Object?> get props => [checkListResult];
+}
+

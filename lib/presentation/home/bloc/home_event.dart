@@ -11,3 +11,9 @@ class SignedOut extends HomeEvent {
   List<Object?> get props => [];
 
 }
+
+class CountList extends HomeEvent {
+  @override
+  List<Object?> get props => [];
+
+}

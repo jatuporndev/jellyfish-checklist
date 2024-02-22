@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
 
 import '../../data/models/check_list_result.dart';
+import '../../data/models/submit_type_enum.dart';
 import '../util/resources/color_manager.dart';
 
 class CheckList extends StatefulWidget {
@@ -156,7 +157,7 @@ class _CheckListState extends State<CheckList> {
                             bottom: MediaQuery.of(context).viewInsets.bottom,
                           ),
                           //edit
-                          child: sheetDia(context, title: name, id: id),
+                          child: sheetDia(context, SubmitTypeEnum.edit, title: name, id: id),
                         ),
                       ],
                     );
@@ -182,7 +183,10 @@ class _CheckListState extends State<CheckList> {
             ),
             const SizedBox(width: 6),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                BlocProvider.of<CheckListBloc>(context)
+                    .add(DeleteList(checkListResult: CheckListResult(id: id)));
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -203,7 +207,7 @@ class _CheckListState extends State<CheckList> {
     );
   }
 
-  SizedBox sheetDia(BuildContext context2, {String? title, String? id}) {
+  SizedBox sheetDia(BuildContext context2, SubmitTypeEnum submitTypeEnum, {String? title, String? id}) {
     if (title != null) {
       detailController.text = title;
     } else {
@@ -254,15 +258,19 @@ class _CheckListState extends State<CheckList> {
           ),
           GestureDetector(
             onTap: () {
-              if (detailController.text.isEmpty) {
-                //BlocProvider.of<CheckListBloc>(context).add(Delete(checkListResult: CheckListResult(id: id)));
+              if (submitTypeEnum == SubmitTypeEnum.add) {
+                BlocProvider.of<CheckListBloc>(context)
+                    .add(AddList(checkListResult: CheckListResult(title: detailController.text)));
               } else {
-                if (id != null) {
-                  BlocProvider.of<CheckListBloc>(context).add(
-                      UpdateList(checkListResult: CheckListResult(id: id, title: detailController.text)));
+                if (detailController.text.isEmpty) {
+                  BlocProvider.of<CheckListBloc>(context)
+                      .add(DeleteList(checkListResult: CheckListResult(id: id)));
+                } else {
+                  BlocProvider.of<CheckListBloc>(context)
+                      .add(UpdateList(checkListResult: CheckListResult(id: id, title: detailController.text)));
                 }
-                //BlocProvider.of<CheckListBloc>(context).add(Delete(checkListResult: CheckListResult(id: id)));
               }
+
 
               Navigator.pop(context);
             },
@@ -343,7 +351,7 @@ class _CheckListState extends State<CheckList> {
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
                   //add
-                  child: sheetDia(context),
+                  child: sheetDia(context,SubmitTypeEnum.add),
                 ),
               ],
             );

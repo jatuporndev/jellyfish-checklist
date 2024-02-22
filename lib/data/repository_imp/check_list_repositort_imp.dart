@@ -3,6 +3,7 @@ import 'package:either_dart/either.dart';
 import 'package:jellyfish/core/app/constrains.dart';
 import 'package:jellyfish/core/network/failure.dart';
 import 'package:jellyfish/data/models/check_list_result.dart';
+import 'package:jellyfish/data/models/count_data.dart';
 import 'package:jellyfish/domain/repository/check_list_repository.dart';
 
 import '../../core/app/app_prefs.dart';
@@ -33,11 +34,14 @@ class CheckListRepositoryImp extends CheckListRepository {
     }
   }
 
-
   @override
-  Future<Either<Failure, bool>> addCheckList(CheckListResult checkListResult) {
-    // TODO: implement addCheckList
-    throw UnimplementedError();
+  Future<Either<Failure, bool>> addCheckList(CheckListResult checkListResult) async {
+    try {
+      await _getCollection().add(checkListResult.toJson());
+      return const Right(true);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
+    }
   }
 
   @override
@@ -54,6 +58,32 @@ class CheckListRepositoryImp extends CheckListRepository {
     try {
       _getCollection().doc(checkListResult.id).update(request);
       return const Right(true);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteCheckList(CheckListResult checkListResult) async {
+    try {
+      await _getCollection().doc(checkListResult.id).delete();
+      return const Right(true);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CountData>> countCheckList() async {
+    try {
+      var collection = _getCollection();
+      var dataTotalSnapshot = await collection.get();
+      var dataTotal = dataTotalSnapshot.size;
+
+      var dataCountSnapshot = await collection.where('isCheck', isEqualTo: true).get();
+      var dataCount = dataCountSnapshot.size;
+
+      return Right(CountData(count: dataCount, total: dataTotal));
     } catch (e) {
       return Left(Failure(500, e.toString()));
     }

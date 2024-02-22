@@ -19,4 +19,11 @@ class CheckListResult {
       isCheck: map['isCheck'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'detail': detail,
+    'isCheck': false,
+    'update_at': DateTime.now()
+  };
 }
