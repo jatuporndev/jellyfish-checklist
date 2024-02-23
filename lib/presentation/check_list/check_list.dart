@@ -298,7 +298,7 @@ class _CheckListState extends State<CheckList> {
   Widget _buildBackButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop("refresh");
       },
       child: Row(
         children: [

@@ -22,20 +22,16 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
 
   int totalCheckList = 0;
   int countCheckList = 0;
-  double checkListPercent = 1.0;
+  double checkListPercent = 0.0;
+
 
   @override
   void initState() {
     homeBloc = BlocProvider.of<HomeBloc>(context);
+    homeBloc.add(CountList());
     super.initState();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    homeBloc.add(CountList());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +73,11 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
                 shadowColor: ColorsManager.mainColor,
                 color: ColorsManager.mainColor,
                 child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRouter.checkList);
+                  onTap: () async {
+                    Object? refresh = await Navigator.of(context).pushNamed(AppRouter.checkList);
+                    if(refresh == "refresh") {
+                      homeBloc.add(CountList());
+                    }
                   },
                   child: Stack(
                     children: [
