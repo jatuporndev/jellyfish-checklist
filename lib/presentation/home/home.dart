@@ -60,7 +60,7 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
                     "Emm..",
                     style: TextStyle(color: Colors.black, fontSize: 26, fontWeight: FontWeight.bold),
                   ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.settings))
+                  //IconButton(onPressed: () {}, icon: Icon(Icons.settings))
                 ],
               ),
             ),
