@@ -12,4 +12,5 @@ class Constants {
   //database key
   static const String room = 'room';
   static const String checkList = 'check_list';
+  static const String ramenCount = 'ramen_count';
 }

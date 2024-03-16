@@ -17,8 +17,6 @@ class CheckList extends StatefulWidget {
 class _CheckListState extends State<CheckList> {
   bool validateDetail = false;
   TextEditingController _textEditingController = TextEditingController();
-  var i = 0;
-  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -210,8 +208,6 @@ class _CheckListState extends State<CheckList> {
   }
 
   SizedBox sheetDia(BuildContext context2, SubmitTypeEnum submitTypeEnum, {String? title, String? id}) {
-    print("object +$i");
-    i++;
     return SizedBox(
       child: SingleChildScrollView(
         child: Column(
@@ -250,7 +246,6 @@ class _CheckListState extends State<CheckList> {
                 ),
                 controller: _textEditingController,
                 autofocus: false,
-                focusNode: _focusNode,
                 onEditingComplete: () {
                   saveData();
                 },
