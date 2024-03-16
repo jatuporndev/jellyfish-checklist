@@ -198,7 +198,7 @@ class _CheckListState extends State<CheckList> {
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.9, // Adjust the height as needed
+            // height: MediaQuery.of(context).size.height * 0.9, // Adjust the height as needed
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
@@ -290,7 +290,7 @@ class _CheckListState extends State<CheckList> {
                 ),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 32),
           ],
         ),
       ),
