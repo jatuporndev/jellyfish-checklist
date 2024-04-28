@@ -17,6 +17,8 @@ import 'package:jellyfish/domain/use_case/check_list/delete_check_list_use_case.
 import 'package:jellyfish/domain/use_case/check_list/get_check_list_use_case.dart';
 import 'package:jellyfish/domain/use_case/check_list/update_check_list_use_case.dart';
 import 'package:jellyfish/domain/use_case/ramen_count/get_ramen_use_case.dart';
+import 'package:jellyfish/domain/use_case/ramen_count/init_ramen_use_case.dart';
+import 'package:jellyfish/domain/use_case/ramen_count/update_ramen_use_case.dart';
 import 'package:jellyfish/presentation/check_list/bloc/check_list_bloc.dart';
 import 'package:jellyfish/presentation/check_room/bloc/check_room_bloc.dart';
 import 'package:jellyfish/presentation/create_room/bloc/create_room_bloc.dart';
@@ -71,7 +73,9 @@ Future<void> initAppModule() async {
   //ramen
   getIt.registerFactory<RamenCountRepository>(() => RamenRepositoryImp(getIt(), getIt()));
   getIt.registerFactory<GetRamenUseCase>(() => GetRamenUseCase(getIt()));
-  getIt.registerFactory<RamenCountBloc>(() => RamenCountBloc(getIt()));
+  getIt.registerFactory<UpdateRamenUseCase>(() => UpdateRamenUseCase(getIt()));
+  getIt.registerFactory<InitRamenUseCase>(() => InitRamenUseCase(getIt()));
+  getIt.registerFactory<RamenCountBloc>(() => RamenCountBloc(getIt(), getIt(), getIt()));
 
 
 }

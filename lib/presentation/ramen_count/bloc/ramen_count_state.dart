@@ -11,8 +11,10 @@ class InitialState extends RamenCountState {}
 
 class LoadingState extends RamenCountState {}
 
+class UpdatedState extends RamenCountState {}
+
 class DataLoadedState extends RamenCountState {
-  final int numberOfRamen;
+  final Stream<int> numberOfRamen;
 
   DataLoadedState(this.numberOfRamen);
 

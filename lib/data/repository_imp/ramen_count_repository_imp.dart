@@ -21,16 +21,46 @@ class RamenRepositoryImp extends RamenCountRepository {
   @override
   Future<Either<Failure, Stream<int>>> getRamen() async {
     try {
-      var streamData = _getCollection().orderBy('update_at', descending: true).snapshots().map((snapshot) {
-        return snapshot.docs.map((e) {
-          Map<String, dynamic> data = e.data();
-          return data['numberOfRamen'];
-        });
+      var streamData = _getCollection().doc(Constants.docRamen).snapshots().map((event) {
+        if (event[Constants.numberOfRamen] == null) {
+          throw Exception;
+        }
+        return event[Constants.numberOfRamen] as int;
       });
-      return Right(streamData as Stream<int>);
+      return Right(streamData);
 
     } catch(e) {
     return Left(Failure(500, e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateRamen(int numberOfRamen) async {
+    try {
+      var request = {Constants.numberOfRamen: numberOfRamen};
+      _getCollection().doc(Constants.docRamen).update(request);
+      return const Right(true);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> initRamen() async {
+    try {
+      var ramenRef = _getCollection().doc(Constants.docRamen);
+      ramenRef.get().then((docSnapshot) {
+        if (docSnapshot.exists) {
+          print('Room exists');
+        } else {
+          ramenRef.set({Constants.numberOfRamen: 0});
+        }
+      }).catchError((error) {
+        print('Error checking room existence: $error');
+      });
+      return const Right(true);
+    } catch (e) {
+      return Left(Failure(500, e.toString()));
     }
   }
 

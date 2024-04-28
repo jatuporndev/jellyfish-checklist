@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jellyfish/presentation/ramen_count/bloc/ramen_count_bloc.dart';
 
 class RamenCount extends StatefulWidget {
   const RamenCount({Key? key}) : super(key: key);
@@ -10,6 +12,13 @@ class RamenCount extends StatefulWidget {
 class _RamenCountState extends State<RamenCount> {
   bool isDisable = false;
   List<String> text = ["🍜", "🍜"];
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<RamenCountBloc>(context).add(InitRamen());
+    BlocProvider.of<RamenCountBloc>(context).add(GetRamen());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,60 +34,96 @@ class _RamenCountState extends State<RamenCount> {
               children: [
                 _buildBackButton(context),
                 SizedBox(height: 18),
-                Center(
-                  child: Text(
-                    "98",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 110, color: Colors.orange),
-                  ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                      onPressed: () {
-                        setState(() {
-                          text.removeAt(0);
-                        });
+                BlocBuilder<RamenCountBloc, RamenCountState>(builder: (context, state) {
+                  if (state is LoadingState) {
+                    return _buildLoadingWidget();
+                  } else if (state is DataLoadedState) {
+                    final numberOfRamenStream = state.numberOfRamen;
+                    return StreamBuilder(
+                        stream: numberOfRamenStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return _buildLoadingWidget();
+                          }
 
-                      },
-                      child: Icon(Icons.remove, color: Colors.white),
-                    ),
-                    Column(
-                      children: [
-                        Text("🍜", style: TextStyle(fontSize: 24)),
-                        Text("Ramen!", style: TextStyle(color: Colors.orange[300])),
-                      ],
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.orange),
-                      onPressed: () {
-                        setState(() {
-                          text.insert(0, "🍜");
+                          if (snapshot.hasData) {
+                            return buildColumn(snapshot.data);
+                          }
+                          return Container();
                         });
-                      },
-                      child: Icon(Icons.add, color: Colors.white),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 48,
-                ),
-                  Wrap(
-                    children:[
-                        for(var i in text)
-                         Text(" $i " ,style: TextStyle(fontSize: 16),)
-                      ],
-                  ),
+                  } else {
+                    return Container();
+                  }
+                  return Container();
+                }),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return Center(
+      child: Text(
+        "🍜",
+        style: TextStyle(fontSize: 24),
+      ),
+    );
+  }
+
+  Column buildColumn(int? numberOfRamen, {bool inInit = false}) {
+    return Column(
+      children: [
+        Center(
+          child: Text(
+            numberOfRamen.toString(),
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 110, color: Colors.orange),
+          ),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+              onPressed: () {
+                BlocProvider.of<RamenCountBloc>(context).add(UpdateRamen(numberOfRamen, false));
+              },
+              child: Icon(Icons.remove, color: Colors.white),
+            ),
+            Column(
+              children: [
+                Text("🍜", style: TextStyle(fontSize: 24)),
+                Text("Ramen!", style: TextStyle(color: Colors.orange[300])),
+              ],
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+              onPressed: () {
+                BlocProvider.of<RamenCountBloc>(context).add(UpdateRamen(numberOfRamen, true));
+              },
+              child: Icon(Icons.add, color: Colors.white),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 48,
+        ),
+        Wrap(
+          children: [
+            for (var i = 0; i < (numberOfRamen ?? 0); i++)
+              Text(
+                "🍜 ",
+                style: TextStyle(fontSize: 16),
+              )
+          ],
+        ),
+      ],
     );
   }
 
@@ -102,5 +147,10 @@ class _RamenCountState extends State<RamenCount> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
