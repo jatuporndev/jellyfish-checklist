@@ -17,8 +17,6 @@ class CheckList extends StatefulWidget {
 class _CheckListState extends State<CheckList> {
   bool validateDetail = false;
   TextEditingController _textEditingController = TextEditingController();
-  var i = 0;
-  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -52,60 +50,62 @@ class _CheckListState extends State<CheckList> {
             const SizedBox(
               height: 12,
             ),
-            BlocBuilder<CheckListBloc, CheckListState>(
-              builder: (context, state) {
-                if (state.listState == ListState.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state.listState == ListState.error) {
-                  return const Center(child: Text("emmm broken"));
-                } else {
-                  return StreamBuilder(
-                    stream: state.checkListResult,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var count = snapshot.data?.length ?? 0;
-                        if (count > 0) {
-                          return ListView.builder(
-                            itemCount: snapshot.data?.length,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              var data = snapshot.data?[index];
-                              return checklistItem("${data?.title}", data?.isCheck, data?.id);
-                            },
-                          );
+            Expanded(
+              child: BlocBuilder<CheckListBloc, CheckListState>(
+                builder: (context, state) {
+                  if (state.listState == ListState.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (state.listState == ListState.error) {
+                    return const Center(child: Text("emmm broken"));
+                  } else {
+                    return StreamBuilder(
+                      stream: state.checkListResult,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var count = snapshot.data?.length ?? 0;
+                          if (count > 0) {
+                            return ListView.builder(
+                              itemCount: snapshot.data?.length,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                var data = snapshot.data?[index];
+                                return checklistItem("${data?.title}", data?.isCheck, data?.id);
+                              },
+                            );
+                          } else {
+                            return Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "lib/assets/images/title.png",
+                                    scale: 4,
+                                    color: Colors.black26,
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  const Text("nothing here"),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.2,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text(snapshot.error.toString()));
                         } else {
-                          return Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "lib/assets/images/title.png",
-                                  scale: 4,
-                                  color: Colors.black26,
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                const Text("nothing here"),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height * 0.2,
-                                ),
-                              ],
-                            ),
-                          );
+                          return const Center(child: CircularProgressIndicator());
                         }
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text(snapshot.error.toString()));
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  );
-                }
-              },
+                      },
+                    );
+                  }
+                },
+              ),
             )
           ],
         ),
@@ -210,8 +210,6 @@ class _CheckListState extends State<CheckList> {
   }
 
   SizedBox sheetDia(BuildContext context2, SubmitTypeEnum submitTypeEnum, {String? title, String? id}) {
-    print("object +$i");
-    i++;
     return SizedBox(
       child: SingleChildScrollView(
         child: Column(
@@ -250,7 +248,6 @@ class _CheckListState extends State<CheckList> {
                 ),
                 controller: _textEditingController,
                 autofocus: false,
-                focusNode: _focusNode,
                 onEditingComplete: () {
                   saveData();
                 },

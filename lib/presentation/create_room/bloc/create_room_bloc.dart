@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jellyfish/data/models/room_request.dart';
@@ -20,9 +23,8 @@ class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
 
   Future<void> summitRoom(
       SummitCreateRoom event, Emitter<CreateRoomState> emit) async {
-    // emit(state.copyWith(createRoomStateEnum: CreateRoomStateEnum.loading));
     final result = await _createRoomUseCase
-        .execute(RoomRequest(key: event.keyName, pin: event.password));
+        .execute(RoomRequest(key: event.keyName, pin: hMacPass(event.password)));
     result.fold(
         (left) => {
               if (left.code == 400)
@@ -41,5 +43,13 @@ class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
                   createRoomStateEnum:
                       CreateRoomStateEnum.createRoomSuccessful))
             });
+  }
+
+  String hMacPass(String pas) {
+    var key = utf8.encode('uCmJFnWtLzvW6yNC3FIZidqj6AFGcRbuH/9LzXjDJ0Ho01IbteGJxCSna4FwlZGZ');
+    var bytes = utf8.encode(pas);
+    var hmacSha256 = Hmac(sha256, key);
+    var digest = hmacSha256.convert(bytes);
+    return "$digest";
   }
 }
