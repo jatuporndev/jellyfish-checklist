@@ -6,6 +6,8 @@ import 'package:jellyfish/presentation/check_list/check_list.dart';
 import 'package:jellyfish/presentation/create_room/bloc/create_room_bloc.dart';
 import 'package:jellyfish/presentation/create_room/create_room.dart';
 import 'package:jellyfish/presentation/home/home.dart';
+import 'package:jellyfish/presentation/ramen_count/bloc/ramen_count_bloc.dart';
+import 'package:jellyfish/presentation/ramen_count/ramen_count.dart';
 import 'package:jellyfish/presentation/sign_in/bloc/sign_in_bloc.dart';
 import 'package:jellyfish/presentation/sign_in/sign_in.dart';
 
@@ -45,6 +47,12 @@ class RouteGenerator {
                   create: (context) => getIt<CheckListBloc>(),
                   child: const CheckList(),
                 ));
+      case AppRouter.ramenCount:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => getIt<RamenCountBloc>(),
+              child: const RamenCount(),
+            ));
       default:
         return unDefinedRoute();
     }

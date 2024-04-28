@@ -15,7 +15,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home>  with WidgetsBindingObserver {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   late final HomeBloc homeBloc;
   final isLogoutButtonHidden = false;
   final _cardSide = 245.0;
@@ -24,14 +24,12 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
   int countCheckList = 0;
   double checkListPercent = 0.0;
 
-
   @override
   void initState() {
     homeBloc = BlocProvider.of<HomeBloc>(context);
     homeBloc.add(CountList());
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +73,7 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
                 child: GestureDetector(
                   onTap: () async {
                     Object? refresh = await Navigator.of(context).pushNamed(AppRouter.checkList);
-                    if(refresh == "refresh") {
+                    if (refresh == "refresh") {
                       homeBloc.add(CountList());
                     }
                   },
@@ -101,13 +99,27 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
                           children: [
                             Row(
                               children: [
-                                const Text(
-                                  "CheckList",
-                                  style: TextStyle(
-                                    fontSize: 34,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "CheckList",
+                                      style: TextStyle(
+                                        fontSize: 34,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const Text(
+                                      "Where?",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const Spacer(),
                                 CircularPercentIndicator(
@@ -147,6 +159,79 @@ class _HomeState extends State<Home>  with WidgetsBindingObserver {
                             )
                           ],
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            //ramen card
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: _cardSide,
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 8,
+                // shadowColor: ColorsManager.mainColor,
+                color: Colors.orangeAccent,
+                child: GestureDetector(
+                  onTap: () async {
+                    Navigator.of(context)
+                        .pushNamed(AppRouter.ramenCount);
+                  },
+                  child: Stack(
+                    children: [
+                      // Background Image
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          // Adjust the radius to match the Card's radius
+                          child: Image.asset(
+                            "lib/assets/images/ramen_card.png",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      // Card Content
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Ramen count",
+                                style: TextStyle(
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const Text(
+                                "Ramen today?",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Spacer(),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "🍜",
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  const Spacer(),
+                                  const Icon(
+                                    Icons.keyboard_arrow_right,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              )
+                            ]),
                       ),
                     ],
                   ),

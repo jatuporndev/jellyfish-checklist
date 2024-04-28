@@ -11,4 +11,5 @@ class AppRouter {
   static const String signIn = "/sign_in";
   static const String createRoom = "/create_room";
   static const String checkList = "/check_list";
+  static const String ramenCount = "/ramen_count";
 }
